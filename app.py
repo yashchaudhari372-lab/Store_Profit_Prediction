@@ -146,8 +146,18 @@ HTML_TEMPLATE = """
                 </div>
             </div>
 
-            <!-- Controls: Themes & Fonts -->
+            <!-- Controls: Currency, Themes & Fonts -->
             <div class="flex flex-wrap items-center gap-3">
+                
+                <!-- Multi-Currency Selector -->
+                <select x-model="currency" class="bg-black/40 text-xs text-indigo-300 font-semibold border border-indigo-500/30 rounded-xl px-3 py-2 outline-none focus:border-indigo-500 transition-all">
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="INR">INR (₹)</option>
+                </select>
+
+                <!-- Themes Selector -->
                 <div class="flex items-center bg-black/40 p-1.5 rounded-xl border border-white/10">
                     <button @click="setTheme('theme-cyber')" :class="{'bg-indigo-600 text-white': theme === 'theme-cyber', 'text-gray-400 hover:text-white': theme !== 'theme-cyber'}" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">
                         Cyber
@@ -160,6 +170,7 @@ HTML_TEMPLATE = """
                     </button>
                 </div>
 
+                <!-- Font Selector -->
                 <select x-model="fontStyle" class="bg-black/40 text-xs text-gray-200 border border-white/10 rounded-xl px-3 py-2 outline-none focus:border-indigo-500 transition-all">
                     <option value="font-sans">Inter (Sans)</option>
                     <option value="font-display">Outfit (Display)</option>
@@ -186,8 +197,8 @@ HTML_TEMPLATE = """
                         <template x-for="(val, key) in formData" :key="key">
                             <div class="flex flex-col gap-1 bg-black/20 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-all">
                                 <div class="flex justify-between items-center">
-                                    <label :for="key" class="text-xs font-medium text-gray-300" x-text="key"></label>
-                                    <span class="text-xs font-mono text-indigo-400" x-text="val"></span>
+                                    <label :for="key" class="text-xs font-medium text-gray-300" x-text="key === 'Sales' ? `Sales (${currencySymbols[currency]})` : key"></label>
+                                    <span class="text-xs font-mono text-indigo-400" x-text="key === 'Sales' ? formatCurrency(val) : val"></span>
                                 </div>
                                 <input 
                                     type="number" 
@@ -220,9 +231,9 @@ HTML_TEMPLATE = """
                 <!-- Main Prediction Score KPI -->
                 <div class="glass-card rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
-                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-widest">Predicted Store Profit</span>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-widest">Predicted Store Profit (<span x-text="currency"></span>)</span>
                         <div class="text-4xl md:text-5xl font-black font-display tracking-tight text-white mt-1">
-                            <span x-text="prediction !== null ? `$${prediction.toFixed(2)}` : '---'"></span>
+                            <span x-text="prediction !== null ? formatCurrency(prediction) : '---'"></span>
                         </div>
                         <p class="text-xs text-gray-400 mt-2">Predicted via Gradient Boosting Machine learning model</p>
                     </div>
@@ -271,7 +282,7 @@ HTML_TEMPLATE = """
                             <tbody class="divide-y divide-white/5">
                                 <tr>
                                     <td class="py-2 px-2.5 font-medium">Sales Volume</td>
-                                    <td class="py-2 px-2.5 font-mono text-indigo-400" x-text="`$${formData['Sales']}`"></td>
+                                    <td class="py-2 px-2.5 font-mono text-indigo-400" x-text="formatCurrency(formData['Sales'])"></td>
                                     <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px]">Active</span></td>
                                 </tr>
                                 <tr>
@@ -299,17 +310,38 @@ HTML_TEMPLATE = """
             Alpine.data('dashboard', () => ({
                 theme: 'theme-cyber',
                 fontStyle: 'font-sans',
+                currency: 'USD',
                 loading: false,
                 prediction: null,
                 formData: JSON.parse('{{ default_values | tojson | safe }}'),
                 barChart: null,
                 lineChart: null,
 
+                currencyRates: {
+                    USD: 1.0,
+                    EUR: 0.92,
+                    GBP: 0.79,
+                    INR: 83.2
+                },
+
+                currencySymbols: {
+                    USD: '$',
+                    EUR: '€',
+                    GBP: '£',
+                    INR: '₹'
+                },
+
                 init() {
                     this.$nextTick(() => {
                         this.initCharts();
                         this.runPrediction();
                     });
+                },
+
+                formatCurrency(value) {
+                    if (value === null || value === undefined) return '---';
+                    const converted = value * this.currencyRates[this.currency];
+                    return `${this.currencySymbols[this.currency]}${converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                 },
 
                 setTheme(themeName) {
