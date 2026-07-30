@@ -40,7 +40,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics Dashboard - Gradient Boosting Intelligence</title>
+    <title>AI Store Profit Prediction - Analytics Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -135,14 +135,14 @@ HTML_TEMPLATE = """
             <div class="flex items-center gap-4">
                 <div class="p-3 bg-gradient-to-tr from-indigo-500 to-rose-500 rounded-xl shadow-lg">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
                 <div>
                     <h1 class="text-2xl md:text-3xl font-extrabold font-display bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-                        Gradient Model Analytics
+                        AI Store Profit Prediction
                     </h1>
-                    <p class="text-xs md:text-sm text-gray-400">Real-time Inference & Model Performance Dashboard</p>
+                    <p class="text-xs md:text-sm text-gray-400">Real-time Retail Analytics & Profitability Forecasting Engine</p>
                 </div>
             </div>
 
@@ -177,7 +177,7 @@ HTML_TEMPLATE = """
                     <div class="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
                         <h2 class="text-lg font-bold flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
-                            Model Parameters
+                            Store Parameters
                         </h2>
                         <button @click="resetDefaults()" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Reset</button>
                     </div>
@@ -208,7 +208,7 @@ HTML_TEMPLATE = """
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span x-text="loading ? 'Evaluating...' : 'Run Analytics Prediction'"></span>
+                            <span x-text="loading ? 'Calculating Profit...' : 'Predict Store Profit'"></span>
                         </button>
                     </form>
                 </div>
@@ -220,11 +220,11 @@ HTML_TEMPLATE = """
                 <!-- Main Prediction Score KPI -->
                 <div class="glass-card rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
-                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-widest">Model Inference Output</span>
+                        <span class="text-xs font-semibold text-indigo-400 uppercase tracking-widest">Predicted Store Profit</span>
                         <div class="text-4xl md:text-5xl font-black font-display tracking-tight text-white mt-1">
-                            <span x-text="prediction !== null ? prediction.toFixed(4) : '---'"></span>
+                            <span x-text="prediction !== null ? `$${prediction.toFixed(2)}` : '---'"></span>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">Evaluated through ensemble Gradient Boosting Regressor trees</p>
+                        <p class="text-xs text-gray-400 mt-2">Predicted via Gradient Boosting Machine learning model</p>
                     </div>
 
                     <div class="flex gap-3">
@@ -242,14 +242,14 @@ HTML_TEMPLATE = """
                 <!-- Interactive Charts -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="glass-card rounded-2xl p-5 flex flex-col">
-                        <h3 class="text-sm font-bold text-gray-200 mb-4">Selected Feature Distribution</h3>
+                        <h3 class="text-sm font-bold text-gray-200 mb-4">Store Metrics Overview</h3>
                         <div class="relative flex-1 min-h-[220px]">
                             <canvas id="barChart"></canvas>
                         </div>
                     </div>
 
                     <div class="glass-card rounded-2xl p-5 flex flex-col">
-                        <h3 class="text-sm font-bold text-gray-200 mb-4">Tree Convergence Curve</h3>
+                        <h3 class="text-sm font-bold text-gray-200 mb-4">Profit Trend Projection</h3>
                         <div class="relative flex-1 min-h-[220px]">
                             <canvas id="lineChart"></canvas>
                         </div>
@@ -258,7 +258,7 @@ HTML_TEMPLATE = """
 
                 <!-- Analysis Summary Table -->
                 <div class="glass-card rounded-2xl p-5">
-                    <h3 class="text-sm font-bold text-gray-200 mb-3">Key Feature Overview</h3>
+                    <h3 class="text-sm font-bold text-gray-200 mb-3">Profitability Parameters</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-gray-300">
                             <thead class="bg-black/40 text-gray-400 uppercase font-mono">
@@ -270,7 +270,7 @@ HTML_TEMPLATE = """
                             </thead>
                             <tbody class="divide-y divide-white/5">
                                 <tr>
-                                    <td class="py-2 px-2.5 font-medium">Sales</td>
+                                    <td class="py-2 px-2.5 font-medium">Sales Volume</td>
                                     <td class="py-2 px-2.5 font-mono text-indigo-400" x-text="`$${formData['Sales']}`"></td>
                                     <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px]">Active</span></td>
                                 </tr>
@@ -280,7 +280,7 @@ HTML_TEMPLATE = """
                                     <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px]">Applied</span></td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 px-2.5 font-medium">Quantity</td>
+                                    <td class="py-2 px-2.5 font-medium">Quantity Sold</td>
                                     <td class="py-2 px-2.5 font-mono text-emerald-400" x-text="formData['Quantity']"></td>
                                     <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px]">Normal</span></td>
                                 </tr>
